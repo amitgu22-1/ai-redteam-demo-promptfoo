@@ -42,18 +42,23 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-storage:/var/lib/grafana
-
   jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    ports:
-      - "8080:8080"
-    user: root
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./:/workspace
-
+  image: jenkins/jenkins:lts
+  container_name: jenkins
+  ports:
+    - "8080:8080"
+  user: root
+  volumes:
+    - jenkins_home:/var/jenkins_home
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./:/workspace
+  command: >
+    bash -c "
+    apt-get update &&
+    apt-get install -y docker.io &&
+    /usr/local/bin/jenkins.sh
+    "
+  
 volumes:
   ollama:
   grafana-storage:
