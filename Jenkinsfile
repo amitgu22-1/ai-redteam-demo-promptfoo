@@ -11,7 +11,7 @@ pipeline {
 
         stage('Start Containers') {
             steps {
-                sh 'docker compose build run'
+                sh 'docker compose run'
             }
         }
 
