@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    restart: always
+
+  promptfoo:
+    image: node:20
+    container_name: promptfoo
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >
+      bash -c "
+      npm install -g promptfoo &&
+      tail -f /dev/null
+      "
+    depends_on:
+      - ollama
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+    user: root
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workspace
+
+volumes:
+  ollama:
+  grafana-storage:
+  jenkins_home:
