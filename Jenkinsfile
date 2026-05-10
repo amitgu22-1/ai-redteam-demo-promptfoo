@@ -11,9 +11,10 @@ pipeline {
 
         stage('Start Containers') {
             steps {
-                sh 'docker compose up run'
+                sh 'docker-compose up -d'
             }
         }
+
 
         stage('Pull Ollama Model') {
             steps {
@@ -42,16 +43,16 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'reports',
-                reportFiles: 'report.html',
-                reportName: 'AI Red Team Report'
-            ])
-        }
-    }
+    // post {
+    //     always {
+    //         publishHTML([
+    //             allowMissing: false,
+    //             alwaysLinkToLastBuild: true,
+    //             keepAll: true,
+    //             reportDir: 'reports',
+    //             reportFiles: 'report.html',
+    //             reportName: 'AI Red Team Report'
+    //         ])
+    //     }
+    //}
 }
